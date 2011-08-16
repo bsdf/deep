@@ -10,7 +10,7 @@ use Term::ANSIColor;
 
 # variables for commandline args
 my $types;         # = qw(img);
-my @skips            = qw(_deep .git .svn);
+my $skip;
 my $target           = ".";
 my $output           = "./_deep";
 my $keep_structure   = 0;
@@ -19,6 +19,7 @@ my $replace          = 0;
 my $use_magic        = 0;
 my $verbose          = 0;
 my $quiet            = 0;
+my $explore_archives = 0;
 
 # variables for current file info
 my $file_ext;
@@ -37,21 +38,26 @@ my %file_classes = (
 );
 
 my $result = GetOptions(
-    "t|type|types=s"    => \$types,
-    "o|out=s"           => \$output,
-    "x|skip=s@"         => \@skips,
-    "k|keep-structure"  => \$keep_structure,
-    "u|make-unique"     => \$make_unique,
-    "R|replace"         => \$replace,
-    "m|magic|use-magic" => \$use_magic,
-    "v|verbose"         => \$verbose,
-    "q|quiet"           => \$quiet,
+    "t|type|types=s"     => \$types,
+    "o|out=s"            => \$output,
+    "x|skip=s"           => \$skip,
+    "u|make-unique"      => \$make_unique,
+    "R|replace"          => \$replace,
+    "v|verbose"          => \$verbose,
+    "q|quiet"            => \$quiet,
 );
+#    "k|keep-structure"   => \$keep_structure,
+#    "m|magic|use-magic"  => \$use_magic,
+#    "z|explore-archives" => \$explore_archives,
 
 print_dbg() if $verbose;
 
 # consolidate all filetypes into one var
 my @match_types = consolidate_types( $types ? $types : "img" );
+
+# parse the --skips= option
+my @skips = qw(_deep .git .svn);
+@skips = ( @skips, split ( /\s*,\s*/, $skip ));
 
 # create output folder if it doesnt already exist
 mkdir $output if ! -e $output;
