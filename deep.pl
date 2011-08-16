@@ -37,15 +37,15 @@ my %file_classes = (
 );
 
 my $result = GetOptions(
-	"t|type|types=s"    => \$types,
-	"o|out=s"           => \$output,
-	"x|skip=s@"         => \@skips,
-	"k|keep-structure"  => \$keep_structure,
-	"u|make-unique"     => \$make_unique,
-	"R|replace"         => \$replace,
-	"m|magic|use-magic" => \$use_magic,
-	"v|verbose"         => \$verbose,
-	"q|quiet"           => \$quiet,
+    "t|type|types=s"    => \$types,
+    "o|out=s"           => \$output,
+    "x|skip=s@"         => \@skips,
+    "k|keep-structure"  => \$keep_structure,
+    "u|make-unique"     => \$make_unique,
+    "R|replace"         => \$replace,
+    "m|magic|use-magic" => \$use_magic,
+    "v|verbose"         => \$verbose,
+    "q|quiet"           => \$quiet,
 );
 
 print_dbg() if $verbose;
@@ -68,77 +68,77 @@ find( \%opts, @ARGV ? @ARGV : '.' );
 print_summary() if not $quiet;
 
 sub deep {
-	if ( check_skip($_) ) {
-		nega( "skipping $_\n" ) if $verbose and $_ ne "_deep";
-		$File::Find::prune = 1;
-		return;
-	}	
+    if ( check_skip($_) ) {
+        nega( "skipping $_\n" ) if $verbose and $_ ne "_deep";
+        $File::Find::prune = 1;
+        return;
+    }   
 
-	#print "Got name = [$File::Find::name] dir = [$File::Find::dir]\n";
+    #print "Got name = [$File::Find::name] dir = [$File::Find::dir]\n";
     if ( check_file($_) ) {
-		store_file($_);
-	}
+        store_file($_);
+    }
 }
 
 sub store_file {
-	my $file = shift;
+    my $file = shift;
 
-	if ( $keep_structure ) {
-		# TODO implement this
-	}
-	else {
+    if ( $keep_structure ) {
+        # TODO implement this
+    }
+    else {
         # process filename
-		if ( $make_unique || (-e "$output/$file_name" && !$replace )) {
+        if ( $make_unique || (-e "$output/$file_name" && !$replace )) {
             # encode dir in filename:
             # ex: ./foo/bar/box.jpg becomes foo_bar_box.jpg
-			$file =~ s/^\.\///g;    # remove ./
-			$file =~ s/\//_/g;      # turn / into _
-		}
-		else {
+            $file =~ s/^\.\///g;    # remove ./
+            $file =~ s/\//_/g;      # turn / into _
+        }
+        else {
             $file = $file_name;
-		}
+        }
 
-		copy $File::Find::name, "$output/$file"; #or die "$! $_";
-	}
+        copy $File::Find::name, "$output/$file"; #or die "$! $_";
+    }
 
-	posi( "moved $_ to $output/$file\n" ) if $verbose;
+    posi( "moved $_ to $output/$file\n" ) if $verbose;
 }
 
 sub check_file {
     my $file = shift;
 
-	# first check file extension
+    # first check file extension
     ($file_name, $file_path, $file_ext) = fileparse($file, qr/([^.]*)$/) or return;
     # bleh.
     $file_name = "$file_name$file_ext";
 
-	if ( $file_ext ~~ @match_types ) {
-		# posi( "$_ matched by extension $file_ext\n" ) if $verbose;
-		return 1;
-	}
-	# then try magic
-	elsif ( $use_magic and check_magic($_) ) {
-		posi( "$_ matched by ~*magic*~\n" ) if $verbose;
-		return 1;
-	}
+    if ( $file_ext ~~ @match_types ) {
+        # posi( "$_ matched by extension $file_ext\n" ) if $verbose;
+        return 1;
+    }
+    # then try magic
+    elsif ( $use_magic and check_magic($_) ) {
+        posi( "$_ matched by ~*magic*~\n" ) if $verbose;
+        return 1;
+    }
 
-	return 0;
+    return 0;
 }
 
 sub check_magic {
-	my $file = shift;
-	# TODO
-	return;
+    my $file = shift;
+    # TODO
+    return;
 }
 
 sub check_skip {
-	s/^\.\///g;
-	return $_ ~~ @skips;
+    s/^\.\///g;
+    return $_ ~~ @skips;
 }
 
 sub consolidate_types {
-	my $str   = shift;
-	my @out;
+    my $str   = shift;
+    my @out;
     my @types = split ( /\s*,\s*/, $str );
 
     # uniqify
@@ -146,7 +146,7 @@ sub consolidate_types {
 
     for my $key ( @types ) {
         if ( my $item = $file_classes{$key} ) {
-        	push @out, @{ $item };
+            push @out, @{ $item };
         }
     }
 
@@ -154,25 +154,25 @@ sub consolidate_types {
 }
 
 sub posi {
-	print '[';
-	print colored ['green'], '~';
-	print '] ';
-	print @_;
+    print '[';
+    print colored ['green'], '~';
+    print '] ';
+    print @_;
 }
 
 sub nega {
-	print '[';
-	print colored ['red'], '-';
-	print '] ';
-	print @_;
+    print '[';
+    print colored ['red'], '-';
+    print '] ';
+    print @_;
 }
 
 sub print_summary {
-	return;
-	# prints a summary of files found
-	# ascii graph too
+    return;
+    # prints a summary of files found
+    # ascii graph too
 
-	print <<END;
+    print <<END;
 
 50 files found in ~/Desktop  [**********          ]
 25 files found in ~/Pictures [*****               ]
