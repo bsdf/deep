@@ -50,7 +50,7 @@ my $result = GetOptions(
 #    "m|magic|use-magic"  => \$use_magic,
 #    "z|explore-archives" => \$explore_archives,
 
-print_dbg() if $verbose;
+#print_dbg() if $verbose;
 
 # consolidate all filetypes into one var
 my @match_types = consolidate_types( $types ? $types : "img" );
@@ -202,38 +202,56 @@ sub print_dbg {
 END
 }
 
+# deep --file-types=xpm,ico --out=~/pix ~/slackware-1.3.3.7
+# deep --types=img,mov --keep-structure .
+# deep --type=img --pipe ~/private_pix | tar -czvf xxx.tar.gz
+# deep --type=img -0 ~/private_pix | tar -czvf xxx.tar.gz
+
 __END__
 
 =head1 NAME
 
 deep - excavate computer artifacts
 
-better than find -lsdkfj a;sld ajksjfl;jdflk {}\;
-
 
 =head1 SYNOPSIS
 
-
+"better than find -lsdkfj a;sld ajksjfl;jdflk {}\;"
 
 
 =head1 DESCRIPTION
 
+deep excavates interesting artifacts from complex folder trees.
 
+deep will dive into a folder and return with all interesting files contained
+within. 
 
+.ini and .tmp files are boring, .gif and .mp3 files are interesting
 
 =head1 USEAGE
 
+    # find all pictures in ~/1997_backup 
+    # and put em in ~/pix
     deep --type=img --out=~/pix ~/1997_backup
-    deep --file-types=xpm,ico --out=~/pix ~/slackware-1.3.3.7
-    deep --types=img,mov --keep-structure .
 
-    deep --type=img --pipe ~/private_pix | tar -czvf xxx.tar.gz
-    deep --type=img -0 ~/private_pix | tar -czvf xxx.tar.gz
+    # find all pictures and movies in ~/gnome-0.12
+    # and put em in ./_deep
+    deep --types=img,mov ~/gnome-0.12 --verbose
+
+    # find all audio files in ~/old_hd
+    # and put em in ~/audio with unique names.
+    # ~/old_hd/wavs/duckjob.wav becomes old_hd_wavs_duckjob.wav
+    deep --type=mp3 --out=~/audio ~/old_hd --make-unique
 
 
-=head1 TYPES
+=head1 FILE CLASSES
 
-img, imgx, mov, mp3, txt, doc
+deep categorizes interesting files into the following classes,
+specified by the --type parameter:
+
+    img, imgx, mov, mp3, txt, doc
+
+the following sections list all file extensions in each class.
 
 =head2 IMG
 
@@ -241,11 +259,11 @@ jpe?g, gif, png, bmp
 
 =head2 IMGX
 
-xpm, ico, tiff, ... 
+xpm, ico, tiff
 
 =head2 MOV
 
-avi, mpe?g, ogm, ...
+avi, mpe?g, ogm
 
 =head2 MP3
 
@@ -253,11 +271,11 @@ wav, aiff, mp3, m4a, ogg, flac, mid
 
 =head2 TXT
 
-txt, [smart check ascii for "text-like" contents], ...
+txt, README, TODO
 
 =head2 DOC
 
-docx?, pdf, pptx?, xlsx?, open office shit
+docx?, pdf, pptx?, xlsx?
 
 
 =head1 AUTHOR
@@ -265,3 +283,8 @@ docx?, pdf, pptx?, xlsx?, open office shit
 bEN ENGLISCH <EMAILBEN145@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
+
+copyright 2011 bEN ENGLISCH <EMAILBEN145@gmail.com>
+
+this app is free software; u may redistribute it and/or modify
+it under the same terms as perl itself.
