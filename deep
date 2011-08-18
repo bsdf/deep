@@ -4,9 +4,12 @@ use strict;
 use warnings;
 use File::Copy;
 use File::Find;
+use Pod::Usage;
 use Getopt::Long;
 use File::Basename;
 use Term::ANSIColor;
+
+my $version = "0.0.1";
 
 # variables for commandline args
 my $types;         # = qw(img);
@@ -45,12 +48,14 @@ my $result = GetOptions(
     "R|replace"          => \$replace,
     "v|verbose"          => \$verbose,
     "q|quiet"            => \$quiet,
+    "version"            => \&print_version,
+    "h|help"             => \&print_help,
 );
 #    "k|keep-structure"   => \$keep_structure,
 #    "m|magic|use-magic"  => \$use_magic,
 #    "z|explore-archives" => \$explore_archives,
 
-#print_dbg() if $verbose;
+print_usage() if (@ARGV == 0);
 
 # consolidate all filetypes into one var
 my @match_types = consolidate_types( $types ? $types : "img" );
@@ -68,7 +73,7 @@ my %opts = (
     no_chdir => 1,
 );
 
-# go 
+# go
 find( \%opts, @ARGV ? @ARGV : '.' );
 
 print_summary() if not $quiet;
@@ -78,7 +83,7 @@ sub deep {
         nega( "skipping $_\n" ) if $verbose and $_ ne "_deep";
         $File::Find::prune = 1;
         return;
-    }   
+    }
 
     #print "Got name = [$File::Find::name] dir = [$File::Find::dir]\n";
     if ( check_file($_) ) {
@@ -173,35 +178,31 @@ sub nega {
     print @_;
 }
 
+sub print_version {
+    posi( "deep $version\n" );
+    exit 0;
+}
+
+sub print_help {
+    posi( "deep $version\n\n" );
+	pod2usage(1);
+    exit 0;
+}
+
+sub print_usage {
+    nega( "err no arguments. see --help for more details\n\n" );
+    pod2usage();
+    exit 0;
+}
+
 sub print_summary {
     return;
+    # TODO
     # prints a summary of files found
     # ascii graph too
-
-    print <<END;
-
-50 files found in ~/Desktop  [**********          ]
-25 files found in ~/Pictures [*****               ]
-25 files found in ~/pix      [*****               ]
-1  file  found in ~/xxx      [*                   ]
-
-END
 }
 
-sub print_dbg {
-    print <<END;
-
-        deep
-     --types:\t$types
-    --target:\t$target
-    --kstrct:\t$keep_structure
-     --magic:\t$use_magic
-   --verbose:\t$verbose
-     --quiet:\t$quiet
-
-END
-}
-
+# TODO
 # deep --file-types=xpm,ico --out=~/pix ~/slackware-1.3.3.7
 # deep --types=img,mov --keep-structure .
 # deep --type=img --pipe ~/private_pix | tar -czvf xxx.tar.gz
@@ -213,10 +214,72 @@ __END__
 
 deep - excavate computer artifacts
 
+"better than find -lsdkfj a;sld ajksjfl;jdflk {}\;"
+
 
 =head1 SYNOPSIS
 
-"better than find -lsdkfj a;sld ajksjfl;jdflk {}\;"
+=over 8
+
+=item B<deep>
+
+[B<--types>S< >I<fileclasses>]
+[B<--out>S< >I<outdir>]
+[B<--skip>S< >I<dirlist>]
+[B<--make-unique>]
+[B<--replace>]
+[B<--verbose>]
+[B<--quiet>]
+I<dir>
+
+=back
+
+=head1 OPTIONS AND ARGUMENTS
+
+=over 8
+
+=item I<dir>
+
+the folder to excavate
+
+=item B<-t, --type, --types> I<fileclasses>
+
+specifies the file classes to excavate. u may specify a single file class or
+multiple, separated by commas
+
+    img, imgx, mov, mp3, txt, doc
+
+=item B<-o, --out> I<outdir>
+
+the directory to place recovered artifacts. default is C<_deep>.
+
+=item B<-x, --skip> I<dirlist>
+
+a list of directories to skip, separated by commas
+
+=item B<-u, --make-unique>
+
+renames artifacts to ensure that their names are unique.
+
+./old_hd/wavs/duckjob.wav becomes old_hd_wavs_duckjob.wav
+
+=item B<-R, --replace>
+
+replace artifacts if they already exist
+
+=item B<-q, --quiet>
+
+do not print any output
+
+=item B<--verbose>
+
+=item B<--version>
+
+=item B<-h, --help>
+
+u already know what these do.
+
+=back
 
 
 =head1 DESCRIPTION
@@ -224,24 +287,25 @@ deep - excavate computer artifacts
 deep excavates interesting artifacts from complex folder trees.
 
 deep will dive into a folder and return with all interesting files contained
-within. 
+within.
 
 .ini and .tmp files are boring, .gif and .mp3 files are interesting
 
-=head1 USEAGE
 
-    # find all pictures in ~/1997_backup 
-    # and put em in ~/pix
-    deep --type=img --out=~/pix ~/1997_backup
+=head1 EXAMPLES
 
-    # find all pictures and movies in ~/gnome-0.12
-    # and put em in ./_deep
-    deep --types=img,mov ~/gnome-0.12 --verbose
+  # find all pictures in ~/1997_backup
+  # and put em in ~/pix
+  deep --type=img --out=~/pix ~/1997_backup
 
-    # find all audio files in ~/old_hd
-    # and put em in ~/audio with unique names.
-    # ~/old_hd/wavs/duckjob.wav becomes old_hd_wavs_duckjob.wav
-    deep --type=mp3 --out=~/audio ~/old_hd --make-unique
+  # find all pictures and movies in ~/gnome-0.12
+  # and put em in ./_deep
+  deep --types=img,mov ~/gnome-0.12 --verbose
+
+  # find all audio files in ~/old_hd
+  # and put em in ~/audio with unique names.
+  # ~/old_hd/wavs/duckjob.wav becomes old_hd_wavs_duckjob.wav
+  deep --type=mp3 --out=~/audio ~/old_hd --make-unique
 
 
 =head1 FILE CLASSES
@@ -287,4 +351,4 @@ bEN ENGLISCH <EMAILBEN145@gmail.com>
 copyright 2011 bEN ENGLISCH <EMAILBEN145@gmail.com>
 
 this app is free software; u may redistribute it and/or modify
-it under the same terms as perl itself.
+it under the same terms as perl herself.

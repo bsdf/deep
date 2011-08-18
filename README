@@ -1,8 +1,42 @@
 NAME
     deep - excavate computer artifacts
 
-SYNOPSIS
     "better than find -lsdkfj a;sld ajksjfl;jdflk {}\;"
+
+SYNOPSIS
+    deep    [--types *fileclasses*] [--out *outdir*] [--skip *dirlist*]
+            [--make-unique] [--replace] [--verbose] [--quiet] *dir*
+
+OPTIONS AND ARGUMENTS
+    *dir*   the folder to excavate
+
+    -t, --type, --types *fileclasses*
+            specifies the file classes to excavate. u may specify a single
+            file class or multiple, separated by commas
+
+                img, imgx, mov, mp3, txt, doc
+
+    -o, --out *outdir*
+            the directory to place recovered artifacts. default is `_deep'.
+
+    -x, --skip *dirlist*
+            a list of directories to skip, separated by commas
+
+    -u, --make-unique
+            renames artifacts to ensure that their names are unique.
+
+            ./old_hd/wavs/duckjob.wav becomes old_hd_wavs_duckjob.wav
+
+    -R, --replace
+            replace artifacts if they already exist
+
+    -q, --quiet
+            do not print any output
+
+    --verbose
+    --version
+    -h, --help
+            u already know what these do.
 
 DESCRIPTION
     deep excavates interesting artifacts from complex folder trees.
@@ -12,19 +46,19 @@ DESCRIPTION
 
     .ini and .tmp files are boring, .gif and .mp3 files are interesting
 
-USEAGE
-        # find all pictures in ~/1997_backup 
-        # and put em in ~/pix
-        deep --type=img --out=~/pix ~/1997_backup
+EXAMPLES
+      # find all pictures in ~/1997_backup
+      # and put em in ~/pix
+      deep --type=img --out=~/pix ~/1997_backup
 
-        # find all pictures and movies in ~/gnome-0.12
-        # and put em in ./_deep
-        deep --types=img,mov ~/gnome-0.12 --verbose
+      # find all pictures and movies in ~/gnome-0.12
+      # and put em in ./_deep
+      deep --types=img,mov ~/gnome-0.12 --verbose
 
-        # find all audio files in ~/old_hd
-        # and put em in ~/audio with unique names.
-        # ~/old_hd/wavs/duckjob.wav becomes old_hd_wavs_duckjob.wav
-        deep --type=mp3 --out=~/audio ~/old_hd --make-unique
+      # find all audio files in ~/old_hd
+      # and put em in ~/audio with unique names.
+      # ~/old_hd/wavs/duckjob.wav becomes old_hd_wavs_duckjob.wav
+      deep --type=mp3 --out=~/audio ~/old_hd --make-unique
 
 FILE CLASSES
     deep categorizes interesting files into the following classes, specified
@@ -35,21 +69,27 @@ FILE CLASSES
     the following sections list all file extensions in each class.
 
   IMG
+
     jpe?g, gif, png, bmp
 
   IMGX
+
     xpm, ico, tiff
 
   MOV
+
     avi, mpe?g, ogm
 
   MP3
+
     wav, aiff, mp3, m4a, ogg, flac, mid
 
   TXT
+
     txt, README, TODO
 
   DOC
+
     docx?, pdf, pptx?, xlsx?
 
 AUTHOR
@@ -59,5 +99,5 @@ COPYRIGHT AND LICENSE
     copyright 2011 bEN ENGLISCH <EMAILBEN145@gmail.com>
 
     this app is free software; u may redistribute it and/or modify it under
-    the same terms as perl itself.
+    the same terms as perl herself.
 
