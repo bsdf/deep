@@ -10,7 +10,7 @@ use Term::ANSIColor;
 
 # variables for commandline args
 my $types;         # = qw(img);
-my $skip;
+my $skip             = "";
 my $target           = ".";
 my $output           = "./_deep";
 my $keep_structure   = 0;
